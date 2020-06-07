@@ -6,6 +6,10 @@ import com.netflix.zuul.ZuulFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+
+import java.util.Enumeration;
+
 /**
  * @author Shashank Goel
  * @version 1.0
@@ -24,13 +28,12 @@ public class PreFilter extends ZuulFilter {
 
 	@Override
 	public int filterOrder() {
-		return 1;
+		return FilterConstants.SEND_RESPONSE_FILTER_ORDER;
 	}
 
 	@Override
 	public boolean shouldFilter() {
-		boolean pass = true;
-		return pass;
+		return true;
 	}
 
 	@Override
@@ -39,6 +42,13 @@ public class PreFilter extends ZuulFilter {
 		HttpServletRequest request = ctx.getRequest();
 
 		LOG.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()));
+
+		Enumeration <String> enume = ctx.getRequest().getHeaderNames();
+		String header;
+		while (enume.hasMoreElements()) {
+			header = enume.nextElement();
+			LOG.info(String.format("Headers: %s = %s \n", header, ctx.getRequest().getHeader(header)));
+		}
 
 		return null;
 	}
