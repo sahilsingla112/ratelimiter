@@ -1,9 +1,9 @@
 package com.blueoptima.ratelimiter.service;
 
-import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
-import com.blueoptima.ratelimiter.model.ApiRegistrationResp;
-import com.blueoptima.ratelimiter.model.UserRegistrationReq;
-import com.blueoptima.ratelimiter.model.UserRegistrationResp;
+import com.blueoptima.ratelimiter.exception.ApiIdNotFoundException;
+import com.blueoptima.ratelimiter.exception.ApiInfoNotSavedException;
+import com.blueoptima.ratelimiter.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,11 +14,36 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 
-	@Override public ApiRegistrationResp register(ApiRegistrationReq registrationReq) {
-		return null;
+	private static final String SUCCESSFUL_MESSAGE = "Registration is successul";
+
+	@Autowired
+	private UserApiConfigService userApiConfigService;
+
+	@Autowired
+	private ZuulRouteConfigService zuulRouteConfigService;
+
+	@Override public ApiRegistrationResp register(ApiRegistrationReq registrationReq) throws ApiInfoNotSavedException {
+		// Add new route to Zuul Configuration
+		zuulRouteConfigService.addRouteToZuulConfig(registrationReq);
+
+		// Add the new api to configuration
+		ApiInfo saved = userApiConfigService.addApiInfo(registrationReq.getDownStreamApiUri(), registrationReq.getDefaultLimitPerSecond());
+
+		if (saved == null)
+			throw new ApiInfoNotSavedException("Error in saving API info to configuration");
+
+		// Dynamic refresh of route configuration for immediate effect
+		if (registrationReq.isRefresh())
+			zuulRouteConfigService.refreshZuulConfig();
+
+		return new ApiRegistrationResp(SUCCESSFUL_MESSAGE, saved.getId());
 	}
 
-	@Override public UserRegistrationResp register(UserRegistrationReq userRegistrationReq) {
-		return null;
+	@Override public UserRegistrationResp register(UserRegistrationReq userRegistrationReq) throws
+			ApiIdNotFoundException {
+		final Integer rateLimitPerSecond = userRegistrationReq.getRateLimitPerSecond();
+		final String username = userRegistrationReq.getUsername();
+		userApiConfigService.addUserApiInfo(userRegistrationReq.getApiId(), username, rateLimitPerSecond);
+		return new UserRegistrationResp(SUCCESSFUL_MESSAGE);
 	}
 }

@@ -1,5 +1,6 @@
 package com.blueoptima.ratelimiter.service;
 
+import com.blueoptima.ratelimiter.exception.ApiIdNotFoundException;
 import com.blueoptima.ratelimiter.model.ApiInfo;
 import com.blueoptima.ratelimiter.model.UserApiKey;
 import com.blueoptima.ratelimiter.model.UserApiLimit;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -57,15 +59,25 @@ public class UserApiConfigServiceImpl implements UserApiConfigService {
 	}
 
 	@Override
-	public void addApiInfo(String apiUrl, Integer limit){
-		ApiInfo apiInfo = new ApiInfo(apiUrl, limit);
-		final ApiInfo saved = apiInfoRepository.save(apiInfo);
-		apiMap.put(apiUrl, saved.getId());
+	public Long getApiId(String apiUrl){
+		return apiMap.get(apiUrl);
 	}
 
 	@Override
-	public void addUserApiInfo(String apiUrl, String userId, Integer limit){
-		final Long apiId = apiMap.get(apiUrl);
+	public ApiInfo addApiInfo(String apiUrl, Integer limit){
+		ApiInfo apiInfo = new ApiInfo(apiUrl, limit);
+		final ApiInfo saved = apiInfoRepository.save(apiInfo);
+		apiMap.put(apiUrl, saved.getId());
+		return saved;
+	}
+
+	@Override
+	public void addUserApiInfo(Long apiId, String userId, Integer limit) throws ApiIdNotFoundException{
+		final Optional<ApiInfo> byId = apiInfoRepository.findById(apiId);
+		if (!byId.isPresent()) {
+			throw new ApiIdNotFoundException(
+					String.format("API id %d coult not be found in the configuration, cannot be registered", apiId));
+		}
 		userApiLimitMap.put(new UserApiKey(userId, apiId), limit);
 	}
 

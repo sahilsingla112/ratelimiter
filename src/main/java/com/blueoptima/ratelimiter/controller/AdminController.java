@@ -5,7 +5,8 @@ import com.blueoptima.ratelimiter.model.ApiRegistrationResp;
 import com.blueoptima.ratelimiter.model.UserRegistrationReq;
 import com.blueoptima.ratelimiter.model.UserRegistrationResp;
 import com.blueoptima.ratelimiter.service.AdminRegistrationService;
-import com.blueoptima.ratelimiter.service.UserApiConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/admin")
 public class AdminController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+
 	@Autowired
 	private AdminRegistrationService adminRegistrationService;
 
@@ -38,11 +41,13 @@ public class AdminController {
 
 	@PostMapping(value = "/user")
 	public ResponseEntity<UserRegistrationResp> register(@RequestBody UserRegistrationReq request){
-		final UserRegistrationResp response = adminRegistrationService.register(request);
-		if (response != null){
+		try {
+			final UserRegistrationResp response = adminRegistrationService.register(request);
 			return new ResponseEntity<>(response, HttpStatus.OK);
+		}catch (Exception e) {
+			String message = String.format("Error: Registration is unsuccessful. Possible cause: %s", e.getMessage());
+			LOGGER.error(message, e);
+			return new ResponseEntity<>(new UserRegistrationResp(message), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return new ResponseEntity<>(new UserRegistrationResp("Error: Registration is unsuccessful"), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
