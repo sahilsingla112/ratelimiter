@@ -1,5 +1,6 @@
 package com.blueoptima.ratelimiter.config;
 
+import com.blueoptima.ratelimiter.zuul.PostFilter;
 import com.blueoptima.ratelimiter.zuul.PreFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,5 +21,9 @@ public class ZuulConfig {
 		return new PreFilter();
 	}
 
+	@Bean
+	public PostFilter postFilter() {
+		return new PostFilter();
+	}
 }
 
