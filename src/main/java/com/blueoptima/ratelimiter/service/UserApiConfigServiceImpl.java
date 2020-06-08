@@ -2,6 +2,7 @@ package com.blueoptima.ratelimiter.service;
 
 import com.blueoptima.ratelimiter.exception.ApiIdNotFoundException;
 import com.blueoptima.ratelimiter.model.ApiInfo;
+import com.blueoptima.ratelimiter.model.RateLimitAccuracy;
 import com.blueoptima.ratelimiter.model.UserApiKey;
 import com.blueoptima.ratelimiter.model.UserApiLimit;
 import com.blueoptima.ratelimiter.repository.ApiInfoRepository;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 06-06-2020
  */
@@ -37,7 +38,7 @@ public class UserApiConfigServiceImpl implements UserApiConfigService {
 	private ApiInfoRepository apiInfoRepository;
 
 	private Map<UserApiKey, Integer> userApiLimitMap = new ConcurrentHashMap<>();
-	private Map<Long, Integer> apiLimitMap = new ConcurrentHashMap<>();
+	private Map<Long, ApiInfo> apiLimitMap = new ConcurrentHashMap<>();
 	private Map<String, Long> apiMap = new ConcurrentHashMap<>();
 
 	@Value("${default.rate.limit:100}")
@@ -53,21 +54,32 @@ public class UserApiConfigServiceImpl implements UserApiConfigService {
 
 		final List<ApiInfo> apiInfos = apiInfoRepository.findAll();
 		for (ApiInfo apiInfo: apiInfos){
-			apiLimitMap.put(apiInfo.getId(), apiInfo.getRatelimit());
+			apiLimitMap.put(apiInfo.getId(), apiInfo);
 			apiMap.put(apiInfo.getUrl(), apiInfo.getId());
 		}
 	}
 
 	@Override
-	public Long getApiId(String apiUrl){
-		return apiMap.get(apiUrl);
+	public ApiInfo getApiInfo(String apiUri){
+		final Long id = apiMap.get(apiUri);
+
+		if (id != null){
+			return getApiInfo(id);
+		}
+
+		return null;
+
+	}
+
+	private ApiInfo getApiInfo(Long apiId){
+		return apiLimitMap.get(apiId);
 	}
 
 	@Override
-	public ApiInfo addApiInfo(String apiUrl, Integer limit){
-		ApiInfo apiInfo = new ApiInfo(apiUrl, limit);
+	public ApiInfo addApiInfo(String apiUri, Integer limit, RateLimitAccuracy accuracy){
+		ApiInfo apiInfo = new ApiInfo(apiUri, limit, accuracy);
 		final ApiInfo saved = apiInfoRepository.save(apiInfo);
-		apiMap.put(apiUrl, saved.getId());
+		apiMap.put(apiUri, saved.getId());
 		return saved;
 	}
 
@@ -84,18 +96,18 @@ public class UserApiConfigServiceImpl implements UserApiConfigService {
 	/**
 	 * First try user+api combination, then api default limit, finally global limit
 	 * @param user
-	 * @param url
+	 * @param uri
 	 * @return
 	 */
 	@Override
-	public Integer getRateLimit(String user, String url){
-		final Long apiId = apiMap.get(url);
+	public Integer getRateLimit(String user, String uri){
+		final Long apiId = apiMap.get(uri);
 		UserApiKey userApiKey = new UserApiKey(user, apiId);
 
 		Integer limit = userApiLimitMap.get(userApiKey);
 
 		if (limit == null) {
-			limit = apiLimitMap.get(apiId);
+			limit = getApiInfo(uri).getRatelimit();
 			if (limit == null)
 				limit = globalDefaultLimit;
 		}

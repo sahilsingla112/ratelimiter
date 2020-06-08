@@ -1,8 +1,6 @@
 package com.blueoptima.ratelimiter.config;
 
-import com.blueoptima.ratelimiter.zuul.PostFilter;
 import com.blueoptima.ratelimiter.zuul.PreFilter;
-import com.blueoptima.ratelimiter.zuul.PreReWriteFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
  */
@@ -24,16 +22,6 @@ public class ZuulConfig {
 	@Bean
 	public PreFilter preFilter() {
 		return new PreFilter();
-	}
-
-	@Bean
-	public PreReWriteFilter preReWriteFilter() {
-		return new PreReWriteFilter();
-	}
-
-	@Bean
-	public PostFilter postFilter() {
-		return new PostFilter();
 	}
 
 	@Primary

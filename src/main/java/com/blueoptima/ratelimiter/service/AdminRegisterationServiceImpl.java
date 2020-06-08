@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
  */
@@ -27,7 +27,7 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 		zuulRouteConfigService.addRouteToZuulConfig(registrationReq);
 
 		// Add the new api to configuration
-		ApiInfo saved = userApiConfigService.addApiInfo(registrationReq.getDownStreamApiUri(), registrationReq.getDefaultLimitPerSecond());
+		ApiInfo saved = userApiConfigService.addApiInfo(registrationReq.getDownStreamApiUri(), registrationReq.getDefaultLimitPerSecond(), registrationReq.getRateLimitAccuracy());
 
 		if (saved == null)
 			throw new ApiInfoNotSavedException("Error in saving API info to configuration");

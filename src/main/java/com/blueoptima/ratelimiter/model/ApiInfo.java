@@ -1,12 +1,11 @@
 package com.blueoptima.ratelimiter.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.ColumnTransformer;
+
+import javax.persistence.*;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
  */
@@ -22,12 +21,18 @@ public class ApiInfo {
 
 	private Integer ratelimit;
 
+	@Column(name = "accuracy")
+	@ColumnTransformer(read = "UPPER(accuracy)", write = "LOWER(?)")
+	@Enumerated(EnumType.STRING)
+	private RateLimitAccuracy accuracy;
+
 	public ApiInfo() {
 	}
 
-	public ApiInfo(String url, Integer ratelimit) {
+	public ApiInfo(String url, Integer ratelimit, RateLimitAccuracy accuracy) {
 		this.url = url;
 		this.ratelimit = ratelimit;
+		this.accuracy = accuracy;
 	}
 
 	public Long getId() {
@@ -52,5 +57,13 @@ public class ApiInfo {
 
 	public void setRatelimit(Integer ratelimit) {
 		this.ratelimit = ratelimit;
+	}
+
+	public RateLimitAccuracy getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(RateLimitAccuracy accuracy) {
+		this.accuracy = accuracy;
 	}
 }

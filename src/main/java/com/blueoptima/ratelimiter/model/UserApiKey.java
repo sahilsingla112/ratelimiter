@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 06-06-2020
  */

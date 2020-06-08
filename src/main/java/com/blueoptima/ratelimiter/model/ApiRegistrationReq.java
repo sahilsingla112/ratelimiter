@@ -1,7 +1,7 @@
 package com.blueoptima.ratelimiter.model;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
  */
@@ -27,6 +27,8 @@ public class ApiRegistrationReq {
 	// This flag will refresh the config data in memory as well as underlying storage
 	// This will make the update with immediate effect.
 	private boolean refresh;
+
+	private RateLimitAccuracy rateLimitAccuracy;
 
 	public String getName() {
 		return name;
@@ -82,5 +84,13 @@ public class ApiRegistrationReq {
 
 	public void setRefresh(boolean refresh) {
 		this.refresh = refresh;
+	}
+
+	public RateLimitAccuracy getRateLimitAccuracy() {
+		return rateLimitAccuracy;
+	}
+
+	public void setRateLimitAccuracy(RateLimitAccuracy rateLimitAccuracy) {
+		this.rateLimitAccuracy = rateLimitAccuracy;
 	}
 }

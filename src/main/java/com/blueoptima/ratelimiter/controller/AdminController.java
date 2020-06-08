@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
  */
@@ -31,12 +31,13 @@ public class AdminController {
 
 	@PostMapping(value = "/api")
 	public ResponseEntity<ApiRegistrationResp> register(@RequestBody ApiRegistrationReq request){
-		final ApiRegistrationResp response = adminRegistrationService.register(request);
-		if (response != null){
+		try {
+			final ApiRegistrationResp response = adminRegistrationService.register(request);
 			return new ResponseEntity<>(response, HttpStatus.OK);
+		}catch (Exception e) {
+			LOGGER.error("Error while executing api registration", e);
+			return new ResponseEntity<>(new ApiRegistrationResp(e.getMessage(), -1L), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return new ResponseEntity<>(new ApiRegistrationResp("Error: Registration is unsuccessful", -1L), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@PostMapping(value = "/user")
