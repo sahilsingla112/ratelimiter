@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 06-06-2020
  */
@@ -14,33 +14,33 @@ import java.util.Objects;
 public class UserApiKey implements Serializable {
 
 	@NotNull
-	private String userid;
+	private String userId;
 
 	@NotNull
-	private String api;
+	private Long apiId;
 
 	public UserApiKey() {
 	}
 
-	public UserApiKey(@NotNull String userid, @NotNull String api) {
-		this.userid = userid;
-		this.api = api;
+	public UserApiKey(@NotNull String userId, @NotNull Long apiId) {
+		this.userId = userId;
+		this.apiId = apiId;
 	}
 
-	public String getUserid() {
-		return userid;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getApi() {
-		return api;
+	public Long getApiId() {
+		return apiId;
 	}
 
-	public void setApi(String api) {
-		this.api = api;
+	public void setApiId(Long apiId) {
+		this.apiId = apiId;
 	}
 
 	@Override public boolean equals(Object o) {
@@ -49,10 +49,10 @@ public class UserApiKey implements Serializable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		UserApiKey that = (UserApiKey) o;
-		return Objects.equals(userid, that.userid) && Objects.equals(api, that.api);
+		return Objects.equals(userId, that.userId) && Objects.equals(apiId, that.apiId);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(userid, api);
+		return Objects.hash(userId, apiId);
 	}
 }
