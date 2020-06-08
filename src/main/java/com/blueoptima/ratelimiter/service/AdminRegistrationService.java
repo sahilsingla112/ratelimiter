@@ -2,11 +2,9 @@ package com.blueoptima.ratelimiter.service;
 
 import com.blueoptima.ratelimiter.exception.ApiIdNotFoundException;
 import com.blueoptima.ratelimiter.exception.ApiInfoNotSavedException;
+import com.blueoptima.ratelimiter.exception.ApiRegistrationUnsuccessfulException;
 import com.blueoptima.ratelimiter.exception.ZuulConfigNotUpdatedException;
-import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
-import com.blueoptima.ratelimiter.model.ApiRegistrationResp;
-import com.blueoptima.ratelimiter.model.UserRegistrationReq;
-import com.blueoptima.ratelimiter.model.UserRegistrationResp;
+import com.blueoptima.ratelimiter.model.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,8 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AdminRegistrationService {
 
-	ApiRegistrationResp register(ApiRegistrationReq registrationReq) throws ApiInfoNotSavedException,
-			ZuulConfigNotUpdatedException;
+	ApiInfo update(ApiInfoUpdateReq updateReq) throws ApiInfoNotSavedException;
+	ApiRegistrationResp register(ApiRegistrationReq registrationReq) throws ApiRegistrationUnsuccessfulException;
 	UserRegistrationResp register(UserRegistrationReq userRegistrationReq) throws ApiIdNotFoundException;
 
 }

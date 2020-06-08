@@ -2,6 +2,7 @@ package com.blueoptima.ratelimiter.service;
 
 import com.blueoptima.ratelimiter.exception.ApiIdNotFoundException;
 import com.blueoptima.ratelimiter.exception.ApiInfoNotSavedException;
+import com.blueoptima.ratelimiter.exception.ApiRegistrationUnsuccessfulException;
 import com.blueoptima.ratelimiter.exception.ZuulConfigNotUpdatedException;
 import com.blueoptima.ratelimiter.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 
-	private static final String SUCCESSFUL_MESSAGE = "Registration is successul";
+	private static final String REGISTRATION_IS_SUCCESSUL = "Registration is successul";
+	private static final String UPDATE_IS_SUCCESSUL = "API Info is successully updated";
 
 	@Autowired
 	private UserApiConfigService userApiConfigService;
@@ -23,22 +25,42 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 	@Autowired
 	private ZuulRouteConfigService zuulRouteConfigService;
 
-	@Override public ApiRegistrationResp register(ApiRegistrationReq registrationReq) throws ApiInfoNotSavedException,
-			ZuulConfigNotUpdatedException {
-		// Add new route to Zuul Configuration
-		zuulRouteConfigService.addRouteToZuulConfig(registrationReq);
+	@Override public ApiInfo update(ApiInfoUpdateReq updateReq) throws ApiInfoNotSavedException {
+		ApiInfo apiInfo = userApiConfigService.getApiInfo(updateReq.getId());
 
+		if (updateReq.getRateLimitAccuracy() != null) {
+			apiInfo.setAccuracy(updateReq.getRateLimitAccuracy());
+		}
+
+		if (updateReq.getDefaultLimitPerMinute() != null){
+			apiInfo.setRatelimit(updateReq.getDefaultLimitPerMinute());
+		}
 		// Add the new api to configuration
-		ApiInfo saved = userApiConfigService.addApiInfo(registrationReq.getDownStreamApiUri(), registrationReq.getDefaultLimitPerMinute(), registrationReq.getRateLimitAccuracy());
+		return userApiConfigService.saveApiInfo(apiInfo);
+	}
 
-		if (saved == null)
-			throw new ApiInfoNotSavedException("Error in saving API info to configuration");
+	@Override public ApiRegistrationResp register(ApiRegistrationReq registrationReq) throws ApiRegistrationUnsuccessfulException{
+		try {
+			//Expectation is that the new route has been added to the Zuul Configuration
+			final ApiInfo apiInfo = userApiConfigService.getApiInfo(registrationReq.getDownStreamApiUri());
 
-		// Dynamic refresh of route configuration for immediate effect
-		if (registrationReq.isRefresh())
-			zuulRouteConfigService.refreshZuulConfig(registrationReq.getName());
+			if (apiInfo != null)
+				throw new ApiRegistrationUnsuccessfulException(String.format("API with id %d already exists. Please PUT method for update", apiInfo.getId()));
 
-		return new ApiRegistrationResp(SUCCESSFUL_MESSAGE, saved.getId());
+			ApiInfo newApiInfo = new ApiInfo(registrationReq.getDownStreamApiUri(), registrationReq.getDefaultLimitPerMinute(),
+					registrationReq.getRateLimitAccuracy());
+
+			// Add the new api to configuration
+			ApiInfo saved = userApiConfigService.saveApiInfo(newApiInfo);
+
+			// Dynamic refresh of route configuration for immediate effect
+			if (registrationReq.isRefresh())
+				zuulRouteConfigService.refreshZuulConfig(registrationReq.getName());
+
+			return new ApiRegistrationResp(REGISTRATION_IS_SUCCESSUL, saved.getId());
+		}catch (ZuulConfigNotUpdatedException | ApiInfoNotSavedException e){
+			throw new ApiRegistrationUnsuccessfulException(e.getMessage(), e);
+		}
 	}
 
 	@Override public UserRegistrationResp register(UserRegistrationReq userRegistrationReq) throws
@@ -46,6 +68,6 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 		final Integer rateLimitPerSecond = userRegistrationReq.getRateLimitPerSecond();
 		final String username = userRegistrationReq.getUsername();
 		userApiConfigService.addUserApiInfo(userRegistrationReq.getApiId(), username, rateLimitPerSecond);
-		return new UserRegistrationResp(SUCCESSFUL_MESSAGE);
+		return new UserRegistrationResp(REGISTRATION_IS_SUCCESSUL);
 	}
 }

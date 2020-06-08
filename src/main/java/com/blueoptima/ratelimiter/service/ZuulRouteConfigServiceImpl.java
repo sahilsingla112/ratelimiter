@@ -48,27 +48,6 @@ public class ZuulRouteConfigServiceImpl implements ZuulRouteConfigService{
 		LOGGER.info(refreshUrl);
 	}
 
-	@Override public void addRouteToZuulConfig(ApiRegistrationReq request) {
-		//TODO
-		// zuul.routes.<name>.path=/<name>/**
-		// zuul.routes.<name>.url=<downStreamServiceUrl>
-		String zuulRouteId = request.getName();
-
-		String url =  request.getDownStreamServiceUrl();
-
-
-		String zuulPath = String.format("/%s/**", zuulRouteId);
-
-		ZuulProperties.ZuulRoute zuulRoute = new ZuulProperties.ZuulRoute();
-		zuulRoute.setId(zuulRouteId);
-		zuulRoute.setUrl(url);
-		zuulRoute.setPath(zuulPath);
-
-		// Execute shell script to add this configuration to git file.
-		// TODO: Future implementation may require exploring JAVA API of git instead of invoking shell script.
-
-	}
-
 	/**
 	 * Precondition: Update the new zuul route in configuration file first (ex: ratelimiter-dev.properties).
 	 * Spring cloud Config server will automatically pick that new configuration and injected to ZuulProperties by @RefreshScope.

@@ -1,8 +1,8 @@
 package com.blueoptima.ratelimiter.service;
 
 import com.blueoptima.ratelimiter.exception.ApiIdNotFoundException;
+import com.blueoptima.ratelimiter.exception.ApiInfoNotSavedException;
 import com.blueoptima.ratelimiter.model.ApiInfo;
-import com.blueoptima.ratelimiter.model.RateLimitAccuracy;
 import com.blueoptima.ratelimiter.model.UserApiKey;
 import com.blueoptima.ratelimiter.model.UserApiLimit;
 import com.blueoptima.ratelimiter.repository.ApiInfoRepository;
@@ -71,15 +71,19 @@ public class UserApiConfigServiceImpl implements UserApiConfigService {
 
 	}
 
-	private ApiInfo getApiInfo(Long apiId){
+	@Override
+	public ApiInfo getApiInfo(Long apiId){
 		return apiLimitMap.get(apiId);
 	}
 
 	@Override
-	public ApiInfo addApiInfo(String apiUri, Integer limit, RateLimitAccuracy accuracy){
-		ApiInfo apiInfo = new ApiInfo(apiUri, limit, accuracy);
+	public ApiInfo saveApiInfo(ApiInfo apiInfo) throws ApiInfoNotSavedException{
 		final ApiInfo saved = apiInfoRepository.save(apiInfo);
-		apiMap.put(apiUri, saved.getId());
+
+		if (saved == null)
+			throw new ApiInfoNotSavedException("Error in saving API info to configuration");
+
+		apiMap.put(saved.getUrl(), saved.getId());
 		apiLimitMap.put(saved.getId(), saved);
 		return saved;
 	}

@@ -6,10 +6,11 @@ package com.blueoptima.ratelimiter.model;
  * @since 07-06-2020
  */
 public class ApiRegistrationReq {
+	private Long id;
+
 	// Example: apiv1dev
 	private String name;
 
-	private String requestPath;
 	private boolean includeRequestPathInUri = false;
 
 	// Example: http://blueoptima.devapi.com
@@ -30,20 +31,20 @@ public class ApiRegistrationReq {
 
 	private RateLimitAccuracy rateLimitAccuracy;
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getRequestPath() {
-		return requestPath;
-	}
-
-	public void setRequestPath(String requestPath) {
-		this.requestPath = requestPath;
 	}
 
 	public boolean isIncludeRequestPathInUri() {
