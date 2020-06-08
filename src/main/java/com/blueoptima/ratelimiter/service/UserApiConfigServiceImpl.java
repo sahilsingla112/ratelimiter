@@ -80,6 +80,7 @@ public class UserApiConfigServiceImpl implements UserApiConfigService {
 		ApiInfo apiInfo = new ApiInfo(apiUri, limit, accuracy);
 		final ApiInfo saved = apiInfoRepository.save(apiInfo);
 		apiMap.put(apiUri, saved.getId());
+		apiLimitMap.put(saved.getId(), saved);
 		return saved;
 	}
 

@@ -19,10 +19,10 @@ public class ApiRegistrationReq {
 	private String downStreamApiUri;
 
 	// If user+api combination is not available, this limit will apply.
-	private Integer defaultLimitPerSecond;
+	private Integer defaultLimitPerMinute;
 
 	//TODO: future support
-	// private Integer defaultLimitPerMinute;
+	// private Integer defaultLimitPerSecond;
 
 	// This flag will refresh the config data in memory as well as underlying storage
 	// This will make the update with immediate effect.
@@ -70,12 +70,12 @@ public class ApiRegistrationReq {
 		this.downStreamApiUri = downStreamApiUri;
 	}
 
-	public Integer getDefaultLimitPerSecond() {
-		return defaultLimitPerSecond;
+	public Integer getDefaultLimitPerMinute() {
+		return defaultLimitPerMinute;
 	}
 
-	public void setDefaultLimitPerSecond(Integer defaultLimitPerSecond) {
-		this.defaultLimitPerSecond = defaultLimitPerSecond;
+	public void setDefaultLimitPerMinute(Integer defaultLimitPerMinute) {
+		this.defaultLimitPerMinute = defaultLimitPerMinute;
 	}
 
 	public boolean isRefresh() {

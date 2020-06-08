@@ -18,6 +18,14 @@ public class UserApiLimit {
 	@NotNull
 	private Integer ratelimit;
 
+	public UserApiLimit() {
+	}
+
+	public UserApiLimit(UserApiKey userApiKey, @NotNull Integer ratelimit) {
+		this.userApiKey = userApiKey;
+		this.ratelimit = ratelimit;
+	}
+
 	public UserApiKey getUserApiKey() {
 		return userApiKey;
 	}

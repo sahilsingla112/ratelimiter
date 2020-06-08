@@ -15,14 +15,3 @@ CREATE TABLE user_api_limit (
   PRIMARY KEY (user_id, api_id),
   Foreign key (api_id) references api_info(id)
 );
-
-INSERT INTO api_info (id, url, ratelimit, accuracy) VALUES
-  (1, '/api/v1/developers', 10, 'LOW'),
-  (2, '/api/v1/organizations', 30, 'HIGH'),
-  (3, '/api/v1/books/available', 5, 'HIGh');
-
-INSERT INTO user_api_limit (user_id, api_id, ratelimit) VALUES
-  ('user1', 1, 100),
-  ('user1', 2, 200),
-  ('user2', 1, 50),
-  ('user2', 2, 300);
