@@ -1,5 +1,6 @@
 package com.blueoptima.ratelimiter.zuul;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import com.blueoptima.ratelimiter.model.ApiInfo;
@@ -12,11 +13,13 @@ import com.netflix.zuul.ZuulFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author Sahil Singla
@@ -37,6 +40,9 @@ public class PreFilter extends ZuulFilter {
 
 	@Autowired
 	private RateLimitServiceLocator serviceLocator;
+
+	@Autowired
+	private ZuulProperties zuulProperties;
 
 	@Override
 	public String filterType() {
@@ -59,6 +65,11 @@ public class PreFilter extends ZuulFilter {
 		HttpServletRequest request = ctx.getRequest();
 
 		String userid = ctx.getRequest().getHeader("userid");
+
+		final Map<String, ZuulProperties.ZuulRoute> routes = zuulProperties.getRoutes();
+		final ZuulProperties.ZuulRoute zuulRoute = routes.get("xyzroute");
+		LOG.info(zuulRoute.getPath());
+
 
 		if (StringUtils.isEmpty(userid)){
 			String errorMessage = "Requests without userid are not allowed. Add a header of 'userid' in your request";

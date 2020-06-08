@@ -10,5 +10,5 @@ import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
 public interface ZuulRouteConfigService {
 	void addRouteToZuulConfig(ApiRegistrationReq request);
 
-	void refreshZuulConfig();
+	void refreshZuulConfig(String zuulRouteId);
 }

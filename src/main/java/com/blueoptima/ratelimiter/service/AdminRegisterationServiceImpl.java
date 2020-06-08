@@ -34,7 +34,7 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 
 		// Dynamic refresh of route configuration for immediate effect
 		if (registrationReq.isRefresh())
-			zuulRouteConfigService.refreshZuulConfig();
+			zuulRouteConfigService.refreshZuulConfig(registrationReq.getName());
 
 		return new ApiRegistrationResp(SUCCESSFUL_MESSAGE, saved.getId());
 	}
