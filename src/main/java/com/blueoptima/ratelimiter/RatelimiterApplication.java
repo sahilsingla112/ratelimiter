@@ -51,7 +51,7 @@ public class RatelimiterApplication extends SpringBootServletInitializer impleme
 	private void initDb(){
 		ApiInfo apiInfo = new ApiInfo("/api/v1/developers", 10, RateLimitAccuracy.HIGH);
 		ApiInfo apiInfo2 = new ApiInfo("/api/v1/organizations", 30, RateLimitAccuracy.HIGH);
-		ApiInfo apiInfo3 = new ApiInfo("/api/v1/books/available", 5, RateLimitAccuracy.HIGH);
+		ApiInfo apiInfo3 = new ApiInfo("/api/v1/books/available", 3, RateLimitAccuracy.HIGH);
 
 		ApiInfo saved = apiInfoRepository.save(apiInfo);
 		ApiInfo saved2 = apiInfoRepository.save(apiInfo2);
