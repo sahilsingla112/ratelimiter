@@ -1,19 +1,13 @@
 package com.blueoptima.ratelimiter.controller;
 
-import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
-import com.blueoptima.ratelimiter.model.ApiRegistrationResp;
-import com.blueoptima.ratelimiter.model.UserRegistrationReq;
-import com.blueoptima.ratelimiter.model.UserRegistrationResp;
+import com.blueoptima.ratelimiter.model.*;
 import com.blueoptima.ratelimiter.service.AdminRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Sahil Singla
@@ -37,6 +31,20 @@ public class AdminController {
 		}catch (Exception e) {
 			LOGGER.error("Error while executing api registration", e);
 			return new ResponseEntity<>(new ApiRegistrationResp(e.getMessage(), -1L), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PutMapping(value = "/api")
+	public ResponseEntity<ApiInfo> update(@RequestBody ApiInfoUpdateReq request){
+		try {
+			if (request.getId() == null)
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+
+			final ApiInfo response = adminRegistrationService.update(request);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}catch (Exception e) {
+			LOGGER.error("Error while updating api info", e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

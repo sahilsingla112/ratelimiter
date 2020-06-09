@@ -1,5 +1,6 @@
 package com.blueoptima.ratelimiter.service;
 
+import com.blueoptima.ratelimiter.exception.ZuulConfigNotUpdatedException;
 import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
 
 /**
@@ -8,7 +9,6 @@ import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
  * @since 07-06-2020
  */
 public interface ZuulRouteConfigService {
-	void addRouteToZuulConfig(ApiRegistrationReq request);
 
-	void refreshZuulConfig();
+	void refreshZuulConfig(String zuulRouteId) throws ZuulConfigNotUpdatedException;
 }

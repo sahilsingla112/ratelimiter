@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class ApiInfo {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue
 	private Long id;
 
 	private String url;
