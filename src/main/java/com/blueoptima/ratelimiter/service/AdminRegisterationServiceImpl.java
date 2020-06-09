@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 
 	private static final String REGISTRATION_IS_SUCCESSUL = "Registration is successul";
-	private static final String UPDATE_IS_SUCCESSUL = "API Info is successully updated";
 
 	@Autowired
 	private UserApiConfigService userApiConfigService;
