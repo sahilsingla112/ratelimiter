@@ -3,7 +3,7 @@ package com.blueoptima.ratelimiter.model;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author Shashank Goel
+ * @author Sahil Singla
  * @version 1.0
  * @since 09-06-2020
  */
@@ -12,7 +12,8 @@ public class ApiInfoUpdateReq {
 	@NotNull
 	private Long id;
 	private Integer defaultLimitPerMinute;
-	private RateLimitAccuracy rateLimitAccuracy;
+	private RateLimitStrategy rateLimitStrategy;
+	private Integer accuracyLevel;
 
 	public Long getId() {
 		return id;
@@ -30,11 +31,19 @@ public class ApiInfoUpdateReq {
 		this.defaultLimitPerMinute = defaultLimitPerMinute;
 	}
 
-	public RateLimitAccuracy getRateLimitAccuracy() {
-		return rateLimitAccuracy;
+	public RateLimitStrategy getRateLimitStrategy() {
+		return rateLimitStrategy;
 	}
 
-	public void setRateLimitAccuracy(RateLimitAccuracy rateLimitAccuracy) {
-		this.rateLimitAccuracy = rateLimitAccuracy;
+	public void setRateLimitStrategy(RateLimitStrategy rateLimitStrategy) {
+		this.rateLimitStrategy = rateLimitStrategy;
+	}
+
+	public Integer getAccuracyLevel() {
+		return accuracyLevel;
+	}
+
+	public void setAccuracyLevel(Integer accuracyLevel) {
+		this.accuracyLevel = accuracyLevel;
 	}
 }

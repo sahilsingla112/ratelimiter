@@ -1,16 +1,12 @@
 package com.blueoptima.ratelimiter.service;
 
 import com.blueoptima.ratelimiter.exception.ZuulConfigNotUpdatedException;
-import com.blueoptima.ratelimiter.model.ApiRegistrationReq;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

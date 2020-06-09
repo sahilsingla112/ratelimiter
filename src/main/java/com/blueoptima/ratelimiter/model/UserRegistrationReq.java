@@ -10,10 +10,10 @@ public class UserRegistrationReq {
 	private String username;
 
 	// Number of requests allowed per second.
-	private Integer rateLimitPerSecond;
+	private Integer rateLimitPerMinute;
 
-	// TODO: Future support: Number of requests allowed per minute.
-	// private Integer rateLimitPerMinute;
+	// TODO: Future support: Number of requests allowed per hour.
+	// private Integer rateLimitPerHour;
 
 	public Long getApiId() {
 		return apiId;
@@ -31,11 +31,11 @@ public class UserRegistrationReq {
 		this.username = username;
 	}
 
-	public Integer getRateLimitPerSecond() {
-		return rateLimitPerSecond;
+	public Integer getRateLimitPerMinute() {
+		return rateLimitPerMinute;
 	}
 
-	public void setRateLimitPerSecond(Integer rateLimitPerSecond) {
-		this.rateLimitPerSecond = rateLimitPerSecond;
+	public void setRateLimitPerMinute(Integer rateLimitPerMinute) {
+		this.rateLimitPerMinute = rateLimitPerMinute;
 	}
 }

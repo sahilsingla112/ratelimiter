@@ -5,7 +5,8 @@ CREATE TABLE api_info(
   id int NOT NULL PRIMARY KEY,
   url VARCHAR(1024) NOT NULL,
   ratelimit INT not null,
-  accuracy VARCHAR(8) default 'LOW'
+  rate_limit_strategy VARCHAR(32) default 'BETTER_FIXED_WINDOW',
+  accuracy_level INT
 );
 
 CREATE TABLE user_api_limit (

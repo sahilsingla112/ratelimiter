@@ -1,7 +1,7 @@
 package com.blueoptima.ratelimiter;
 
 import com.blueoptima.ratelimiter.model.ApiInfo;
-import com.blueoptima.ratelimiter.model.RateLimitAccuracy;
+import com.blueoptima.ratelimiter.model.RateLimitStrategy;
 import com.blueoptima.ratelimiter.model.UserApiKey;
 import com.blueoptima.ratelimiter.model.UserApiLimit;
 import com.blueoptima.ratelimiter.repository.ApiInfoRepository;
@@ -16,8 +16,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-
-import java.util.Arrays;
 
 @EnableZuulProxy
 @SpringBootApplication
@@ -44,18 +42,16 @@ public class RatelimiterApplication extends SpringBootServletInitializer impleme
 	@Override public void run(String... args) throws Exception {
 		initDb();
 		userApiConfigServiceImpl.loadAllConfig();
-		int ratelimit = userApiConfigServiceImpl.getRateLimit("user1", "/api/v1/developers");
-		LOGGER.info("" + ratelimit);
 	}
 
 	private void initDb(){
-		ApiInfo apiInfo = new ApiInfo("/api/v1/developers", 10, RateLimitAccuracy.HIGH);
-		ApiInfo apiInfo2 = new ApiInfo("/api/v1/organizations", 30, RateLimitAccuracy.HIGH);
-		ApiInfo apiInfo3 = new ApiInfo("/api/v1/books/available", 3, RateLimitAccuracy.HIGH);
+		ApiInfo apiInfo3 = new ApiInfo("/api/v1/books/available", 3, RateLimitStrategy.TUNABLE_SLIDING_WINDOW, 3);
+		ApiInfo apiInfo = new ApiInfo("/api/v1/developers", 10, RateLimitStrategy.BETTER_FIXED_WINDOW, null);
+		ApiInfo apiInfo2 = new ApiInfo("/api/v1/organizations", 30, RateLimitStrategy.BETTER_FIXED_WINDOW, null);
 
+		ApiInfo saved3 = apiInfoRepository.save(apiInfo3);
 		ApiInfo saved = apiInfoRepository.save(apiInfo);
 		ApiInfo saved2 = apiInfoRepository.save(apiInfo2);
-		apiInfoRepository.save(apiInfo3);
 
 		UserApiKey userApiKey = new UserApiKey("user1", saved.getId());
 		UserApiKey userApiKey2 = new UserApiKey("user1", saved2.getId());

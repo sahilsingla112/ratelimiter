@@ -23,13 +23,15 @@ public class ApiRegistrationReq {
 	private Integer defaultLimitPerMinute;
 
 	//TODO: future support
-	// private Integer defaultLimitPerSecond;
+	// private Integer defaultLimitPerHour;
 
 	// This flag will refresh the config data in memory as well as underlying storage
 	// This will make the update with immediate effect.
 	private boolean refresh;
 
-	private RateLimitAccuracy rateLimitAccuracy;
+	private RateLimitStrategy rateLimitStrategy;
+
+	private Integer accuracyLevel;
 
 	public Long getId() {
 		return id;
@@ -87,11 +89,19 @@ public class ApiRegistrationReq {
 		this.refresh = refresh;
 	}
 
-	public RateLimitAccuracy getRateLimitAccuracy() {
-		return rateLimitAccuracy;
+	public RateLimitStrategy getRateLimitStrategy() {
+		return rateLimitStrategy;
 	}
 
-	public void setRateLimitAccuracy(RateLimitAccuracy rateLimitAccuracy) {
-		this.rateLimitAccuracy = rateLimitAccuracy;
+	public void setRateLimitStrategy(RateLimitStrategy rateLimitStrategy) {
+		this.rateLimitStrategy = rateLimitStrategy;
+	}
+
+	public Integer getAccuracyLevel() {
+		return accuracyLevel;
+	}
+
+	public void setAccuracyLevel(Integer accuracyLevel) {
+		this.accuracyLevel = accuracyLevel;
 	}
 }

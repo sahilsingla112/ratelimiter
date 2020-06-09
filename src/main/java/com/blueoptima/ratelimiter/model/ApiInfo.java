@@ -3,6 +3,8 @@ package com.blueoptima.ratelimiter.model;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * @author Sahil Singla
@@ -12,6 +14,7 @@ import javax.persistence.*;
 
 @Entity
 public class ApiInfo {
+	private static final int MAX_ACCURACY_LEVEL = 6;
 
 	@Id
 	@GeneratedValue
@@ -21,18 +24,23 @@ public class ApiInfo {
 
 	private Integer ratelimit;
 
-	@Column(name = "accuracy")
-	@ColumnTransformer(read = "UPPER(accuracy)", write = "LOWER(?)")
+	@Column(name = "rate_limit_strategy")
+	@ColumnTransformer(read = "UPPER(rate_limit_strategy)", write = "LOWER(?)")
 	@Enumerated(EnumType.STRING)
-	private RateLimitAccuracy accuracy;
+	private RateLimitStrategy rateLimitStrategy;
+
+	@Min(1)
+	@Max(6)
+	private Integer accuracyLevel;
 
 	public ApiInfo() {
 	}
 
-	public ApiInfo(String url, Integer ratelimit, RateLimitAccuracy accuracy) {
+	public ApiInfo(String url, Integer ratelimit, RateLimitStrategy accuracy, Integer accuracyLevel) {
 		this.url = url;
 		this.ratelimit = ratelimit;
-		this.accuracy = accuracy;
+		this.rateLimitStrategy = accuracy;
+		this.accuracyLevel = accuracyLevel;
 	}
 
 	public Long getId() {
@@ -59,11 +67,19 @@ public class ApiInfo {
 		this.ratelimit = ratelimit;
 	}
 
-	public RateLimitAccuracy getAccuracy() {
-		return accuracy;
+	public RateLimitStrategy getRateLimitStrategy() {
+		return rateLimitStrategy;
 	}
 
-	public void setAccuracy(RateLimitAccuracy accuracy) {
-		this.accuracy = accuracy;
+	public void setRateLimitStrategy(RateLimitStrategy rateLimitStrategy) {
+		this.rateLimitStrategy = rateLimitStrategy;
+	}
+
+	public Integer getAccuracyLevel() {
+		return accuracyLevel;
+	}
+
+	public void setAccuracyLevel(Integer accuracyLevel) {
+		this.accuracyLevel = accuracyLevel;
 	}
 }

@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
+ * This service let the administrator to change the underlying configuration of existing users and APIs.
+ * It also lets him to register a new API on the fly. System will be refreshed dynamically without restart and start
+ * applying rate limiting stratgies based on the configuration.
+ * **PRECONDITION**: Zuul routes need to be updated in ratelimiter-dev.properties config file before hitting this API.
+ *
  * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
@@ -27,13 +32,18 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 	@Override public ApiInfo update(ApiInfoUpdateReq updateReq) throws ApiInfoNotSavedException {
 		ApiInfo apiInfo = userApiConfigService.getApiInfo(updateReq.getId());
 
-		if (updateReq.getRateLimitAccuracy() != null) {
-			apiInfo.setAccuracy(updateReq.getRateLimitAccuracy());
+		if (updateReq.getRateLimitStrategy() != null) {
+			apiInfo.setRateLimitStrategy(updateReq.getRateLimitStrategy());
 		}
 
 		if (updateReq.getDefaultLimitPerMinute() != null){
 			apiInfo.setRatelimit(updateReq.getDefaultLimitPerMinute());
 		}
+
+		if (updateReq.getAccuracyLevel() != null){
+			apiInfo.setAccuracyLevel(updateReq.getAccuracyLevel());
+		}
+
 		// Add the new api to configuration
 		return userApiConfigService.saveApiInfo(apiInfo);
 	}
@@ -47,7 +57,7 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 				throw new ApiRegistrationUnsuccessfulException(String.format("API with id %d already exists. Please PUT method for update", apiInfo.getId()));
 
 			ApiInfo newApiInfo = new ApiInfo(registrationReq.getDownStreamApiUri(), registrationReq.getDefaultLimitPerMinute(),
-					registrationReq.getRateLimitAccuracy());
+					registrationReq.getRateLimitStrategy(), registrationReq.getAccuracyLevel());
 
 			// Add the new api to configuration
 			ApiInfo saved = userApiConfigService.saveApiInfo(newApiInfo);
@@ -64,7 +74,7 @@ public class AdminRegisterationServiceImpl implements AdminRegistrationService{
 
 	@Override public UserRegistrationResp register(UserRegistrationReq userRegistrationReq) throws
 			ApiIdNotFoundException {
-		final Integer rateLimitPerSecond = userRegistrationReq.getRateLimitPerSecond();
+		final Integer rateLimitPerSecond = userRegistrationReq.getRateLimitPerMinute();
 		final String username = userRegistrationReq.getUsername();
 		userApiConfigService.addUserApiInfo(userRegistrationReq.getApiId(), username, rateLimitPerSecond);
 		return new UserRegistrationResp(REGISTRATION_IS_SUCCESSUL);
