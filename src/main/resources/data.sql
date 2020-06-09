@@ -9,7 +9,7 @@ CREATE TABLE api_info(
 );
 
 CREATE TABLE user_api_limit (
-  user_id VARCHAR(64) NOT NULL,
+  user_id VARCHAR(16) NOT NULL,
   api_id int NOT NULL,
   ratelimit INT not null,
   PRIMARY KEY (user_id, api_id),

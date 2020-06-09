@@ -7,20 +7,38 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-
 /**
  * Much better than naive Fixed window algorithm
  * Traffic burst is smoothened by extrapolating the number of requests from the previous window.
+ * Example: Window size is 1 minute.
+ *					 (hh:mm:ss)
+ * 20 requests is made between 10:00:00 and 10:00:59
+ * In the previous window, count=20.
+ * Then, a request is made at 10:01:14
+ * Current Window: 14 seconds
+ * Previous Window: 46 seconds
+ * Extrapolated requests =  (20 * 46)/60  ~ 15 requests
+ * Total requests = 15 + 1 = 16 requests
+ *
+ *
+ * Cost analysis:
+ * 2 GET calls (for current and previous window)
+ * 1 INCR call
+ *
+ * Memory analysis:
+ * Key size = 16 bytes + 4 bytes + 5 bytes (overhead of delimiters) = 25 bytes
+ * Value size = 4 bytes
+ * Size of 1 record = 29 bytes
+ * 10 million of records will take = 290 MB
+ *
  * @author Sahil Singla
  * @version 1.0
  * @since 07-06-2020
  */
 @Service("fixedwindow")
-public class RateLimitFixedWindowImpl implements RateLimitService{
+public class RateLimitImprovedFixedWindowImpl implements RateLimitService{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RateLimitFixedWindowImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RateLimitImprovedFixedWindowImpl.class);
 
 	@Autowired
 	private JedisPool jedisPool;
@@ -40,8 +58,8 @@ public class RateLimitFixedWindowImpl implements RateLimitService{
 			// Check the timestamp of previous window
 			final long prevTimeInMinute = currentTimeInMinute - millisToMinute;
 
-			String currentKey = userId + "_" + apiId + "_" + currentTimeInMinute;
-			String prevKey = userId + "_" + apiId + "_" + prevTimeInMinute;
+			String currentKey = userId + "_api" + apiId + "_" + currentTimeInMinute;
+			String prevKey = userId + "_api" + apiId + "_" + prevTimeInMinute;
 
 			String currentCountStr = jedis.get(currentKey);
 			int currentCount  = 0;
@@ -67,7 +85,7 @@ public class RateLimitFixedWindowImpl implements RateLimitService{
 				jedis.expire(currentKey, 120);
 			}
 
-			LOGGER.info("Count in the current window + : " + 1+currentCount);
+			LOGGER.info("Count in the current window: " + (1+currentCount));
 			LOGGER.info("Extrapolated count from the previous window: " + extrapolatedPrevCount);
 		}
 		return totalCount <= maxRateLimit;
