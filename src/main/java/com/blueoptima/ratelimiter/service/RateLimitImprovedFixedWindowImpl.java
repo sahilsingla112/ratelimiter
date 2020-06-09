@@ -1,5 +1,6 @@
 package com.blueoptima.ratelimiter.service;
 
+import com.blueoptima.ratelimiter.model.ApiInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ import redis.clients.jedis.JedisPool;
  * @version 1.0
  * @since 07-06-2020
  */
-@Service("fixedwindow")
+@Service("better_fixed_window")
 public class RateLimitImprovedFixedWindowImpl implements RateLimitService{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RateLimitImprovedFixedWindowImpl.class);
@@ -43,8 +44,10 @@ public class RateLimitImprovedFixedWindowImpl implements RateLimitService{
 	@Autowired
 	private JedisPool jedisPool;
 
-	@Override public boolean allowRequest(String userId, Long apiId, Integer maxRateLimit) {
+	@Override public boolean allowRequest(String userId, ApiInfo apiInfo, Integer maxRateLimit) {
 		int totalCount = 0;
+		long apiId = apiInfo.getId();
+
 		LOGGER.info("maxRateLimit: " + maxRateLimit);
 		try(Jedis jedis = jedisPool.getResource()) {
 			final int millisToMinute = 60 * 1000;

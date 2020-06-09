@@ -95,8 +95,8 @@ public class PreFilter extends ZuulFilter {
 				final Integer maxRateLimitAllowed = userApiConfigService.getRateLimit(userid, downStreamUri);
 
 
-				final RateLimitService rateLimitService = serviceLocator.getRateLimitService(apiInfo.getAccuracy());
-				final boolean allowRequest = rateLimitService.allowRequest(userid, apiInfo.getId(), maxRateLimitAllowed);
+				final RateLimitService rateLimitService = serviceLocator.getRateLimitService(apiInfo.getRateLimitStrategy());
+				final boolean allowRequest = rateLimitService.allowRequest(userid, apiInfo, maxRateLimitAllowed);
 
 				if (!allowRequest) {
 					LOG.warn(String.format("%s for %s", REJECT_MESSAGE, downStreamUri));

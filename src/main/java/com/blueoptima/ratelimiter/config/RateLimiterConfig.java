@@ -24,16 +24,9 @@ public class RateLimiterConfig {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RateLimiterConfig.class);
 
-	private ConfigurationParser parser;
 
-	public RateLimiterConfig(ConfigurationParser configurationParser){
-		this.parser = configurationParser;
-	}
+	public RateLimiterConfig(){
 
-	@PostConstruct
-	public void init(){
-		//final Integer limit = parser.getRateLimit("user1", "/api/v1/developer");
-		//LOG.info("Rate limit %d", limit);
 	}
 
 	@Bean
